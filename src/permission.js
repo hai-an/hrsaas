@@ -3,6 +3,7 @@ import store from '@/store'
 import NProgress from 'nprogress' // 引入进度条
 import 'nprogress/nprogress.css' // 引入进度条样式
 const whiteList = ['/login', '/404']
+// 全局路由前置守卫
 router.beforeEach((to, from, next) => {
   NProgress.start() // 开启进度条
   // to和from是route对象，必须调用next（）来解析钩子
@@ -28,6 +29,7 @@ router.beforeEach((to, from, next) => {
   }
   NProgress.done() // 设置手动更换地址的时候,进度条的关闭
 })
+// 全局路由后置守卫
 router.afterEach(route => {
   // 这些挂钩不会得到下一个函数，也不会影响导航
   NProgress.done() // 关闭进度条
