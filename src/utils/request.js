@@ -11,7 +11,7 @@ const service = axios.create({
 }) // 创建一个axios的实例
 
 // 设置超时的时间 秒数
-const Timeout = 10
+const Timeout = 3600
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
@@ -50,8 +50,13 @@ service.interceptors.response.use(
     }
   },
   (error) => {
+    if (error.response && error.response.data && error.response.data.code === 10002) {
+      store.dispatch('user/logout')
+      router.push('/login')
+    } else {
     // 失败的情况,提示错误信息
-    Message.error(error.message)
+      Message.error(error.message)
+    }
     // 返回Promise.reject 会跳过.then,直接进入到.catch => 返回执行错误
     return Promise.reject(error)
   }
