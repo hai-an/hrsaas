@@ -1,4 +1,4 @@
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
 // 状态
 const state = {
@@ -7,10 +7,11 @@ const state = {
 }
 // 修改状态
 const mutations = {
-  // 设置token
+  // 设置token之后, 添加当前时间戳
   setToken(state, token) {
     state.token = token // 设置 token 只是修改 state的数据
     setToken(token) // 同步vuex 数据给本地token
+    setTimeStamp() // 设置当前的时间戳存到 本地
   },
   // 删除缓存
   removeToken(state) {
