@@ -41,6 +41,11 @@ const actions = {
     const baseInfo = await getUserDetailById(result.userId) // 得到 用户基本资料
     context.commit('setUserInfo', { ...result, ...baseInfo }) //  此时已经获取到了用户的基本资料 迫不得已 为了头像再次调用一个接口 合并到一起
     return result // 为后面的权限做准备
+  },
+  // 退出登录 => 清除 token ,清除 用户基本资料
+  logout(context) {
+    context.commit('removeToken') // 清除token
+    context.commit('removeUserInfo') // 清除 用户基本资料
   }
 }
 export default {

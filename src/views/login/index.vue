@@ -134,7 +134,6 @@ export default {
         if (isOK) {
           try {
             this.loading = true
-            console.log(this.loginForm)
             await this['user/login'](this.loginForm) // 确保表单对象的属性与请求的字段名一致
             this.$router.push('/') // 成功后跳转到首页(重定向)
           } catch (err) {
