@@ -17,7 +17,7 @@ export function getUserInfo() {
     method: 'post'
   })
 }
-
-export function logout() {
-
+// 获取用户的基本信息
+export function getUserDetailById(id) {
+  return request(`/sys/user/${id}`)
 }

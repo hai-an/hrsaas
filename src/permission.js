@@ -4,7 +4,7 @@ import NProgress from 'nprogress' // 引入进度条
 import 'nprogress/nprogress.css' // 引入进度条样式
 const whiteList = ['/login', '/404']
 // 全局路由前置守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   NProgress.start() // 开启进度条
   // to和from是route对象，必须调用next（）来解析钩子
   // 思路: 判断有无token
@@ -19,6 +19,10 @@ router.beforeEach((to, from, next) => {
       next('/') // 跳到主页
     } else {
       next() // 放行
+      // 有token 获取用户资料
+      if (!store.getters.userId) {
+        await store.dispatch('user/getUserInfo')
+      }
     }
   } else { // indexOf返回-1,表示未找到,既不在白名单里面
     if (whiteList.indexOf(to.path) > -1) {

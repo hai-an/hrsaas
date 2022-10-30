@@ -1,5 +1,5 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login, getUserInfo } from '@/api/user'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
 // 状态
 const state = {
   token: getToken(), // 设置共享状态
@@ -38,7 +38,8 @@ const actions = {
   // 只需要传token即可,token已经在请求拦截器中配置好了,无需传入参数
   async getUserInfo(context) {
     const result = await getUserInfo() // 得到 => data数据
-    context.commit('setUserInfo', result)
+    const baseInfo = await getUserDetailById(result.userId) // 得到 用户基本资料
+    context.commit('setUserInfo', { ...result, ...baseInfo }) //  此时已经获取到了用户的基本资料 迫不得已 为了头像再次调用一个接口 合并到一起
     return result // 为后面的权限做准备
   }
 }
