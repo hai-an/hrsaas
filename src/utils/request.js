@@ -20,11 +20,11 @@ service.interceptors.request.use(
       // 判断token是否超时
       // 超时 表示token无效了,只有在token有效时,才去检查时间戳是否失效
       // 中断访问  提示错误信息  清除token,用户基本资料 跳到登录页
-      if (isCheckTimeout()) {
+      /*  if (isCheckTimeout()) {
         store.dispatch('user/logout')
         router.push('/login')
         return Promise.reject(new Error('token超时'))
-      }
+      } */
       config.headers['Authorization'] = `Bearer ${store.getters.token}`
     }
     return config //  最后一定要返回 config对象
@@ -64,9 +64,10 @@ service.interceptors.response.use(
 // token超时
 // 超时逻辑:
 // (当前的时间戳 - 存入的时间戳) 大于 指定的时间戳
-function isCheckTimeout() {
+
+/* function isCheckTimeout() {
   var currentTimeout = Date.now() // 当前时间戳
   var timeStamp = getTimeStamp() // 缓存时间戳
   return (currentTimeout - timeStamp) / 1000 > Timeout // 时间戳为毫秒 需要除以1000转换为秒
-}
+} */
 export default service // 导出axios实例
