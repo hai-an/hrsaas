@@ -2,7 +2,7 @@ import { Message } from 'element-ui'
 import axios from 'axios' // 创建一个axios的实例
 import store from '@/store'
 import router from '@/router'
-import { getTimeStamp } from '@/utils/auth'
+// import { getTimeStamp } from '@/utils/auth'
 const service = axios.create({
   // 如果执行 npm run dev  值为 /api 正确  /api 这个代理只是给开发环境配置的代理
   // 如果执行 npm run build 值为 /prod-api  没关系  运维应该在上线的时候 给你配置上 /prod-api的代理
@@ -11,7 +11,7 @@ const service = axios.create({
 }) // 创建一个axios的实例
 
 // 设置超时的时间 秒数
-const Timeout = 3600
+// const Timeout = 3600
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
