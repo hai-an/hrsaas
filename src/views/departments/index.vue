@@ -2,14 +2,16 @@
   <div class="dashboard-container">
     <div class="app-container">
       <el-card class="tree-card">
-        <tree-tools :tree-node="company" :is-root="true" />
+        <tree-tools :tree-node="company" :is-root="true" @AddDepts="addDepts" />
         <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
           <!-- 使用自定义的 数结构 -->
           <!-- slot-scope 作用域插槽 :传入两个参数node和data，分别表示当前节点的 Node 对象和当前节点的数据。 -->
-          <tree-tools slot-scope="{data}" :tree-node="data" @delDepts="getDepartments" />
+          <tree-tools slot-scope="{data}" :tree-node="data" @AddDepts="addDepts" @delDepts="getDepartments" />
         </el-tree>
       </el-card>
     </div>
+    <!-- 放置 新增弹层组件 -->
+    <add-depts :is-show-dialog="isShowDialog" />
   </div>
 </template>
 
@@ -17,8 +19,9 @@
 import treeTools from './components/tree-tools.vue'
 import { getDepartments } from '@/api/departments'
 import { tranListToTreeData } from '@/utils'
+import AddDepts from './components/add-dept.vue'
 export default {
-  components: { treeTools },
+  components: { treeTools, AddDepts },
   data() {
     return {
       company: { name: '', manager: '' },
@@ -26,7 +29,9 @@ export default {
       defaultProps: {
         // children: 'children',
         label: 'name'
-      }
+      },
+      isShowDialog: false, // 默认不显示弹层
+      node: null // 点击拿到的部门信息节点
     }
   },
   created() {
@@ -37,6 +42,10 @@ export default {
       const result = await getDepartments()
       this.company = { name: result.companyName, manager: '负责人' }
       this.departs = tranListToTreeData(result.depts, '')
+    },
+    addDepts(node) {
+      this.isShowDialog = true // 显示弹层
+      this.node = node // 因为node是当前的点击的部门,此时这个部门应该记录下来
     }
   }
 }

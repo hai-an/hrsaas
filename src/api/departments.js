@@ -14,7 +14,17 @@ export function getDepartments() {
 */
 export function deleteDepartment(id) {
   return request({
-    method: 'DELETE',
-    url: `/company/department${id}`
+    method: 'delete',
+    url: `/company/department/${id}`
+  })
+}
+/*
+新增部门接口
+*/
+export function addDepartments(data) {
+  return request({
+    url: '/company/department',
+    method: 'post',
+    data
   })
 }

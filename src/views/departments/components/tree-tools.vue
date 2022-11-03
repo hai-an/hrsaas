@@ -54,6 +54,7 @@ export default {
     operateDepts(type) {
       if (type === 'add') { // 添加子部门
         this.$message(`${type}成功!`)
+        this.$emit('AddDepts', this.treeNode) // 点击传入当前节点信息
       } else if (type === 'edit') { // 编辑子部门
         this.$message(`${type}成功!`)
       } else { // 删除子部门
