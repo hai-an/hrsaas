@@ -6,7 +6,7 @@
         <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
           <!-- 使用自定义的 数结构 -->
           <!-- slot-scope 作用域插槽 :传入两个参数node和data，分别表示当前节点的 Node 对象和当前节点的数据。 -->
-          <tree-tools slot-scope="{data}" :tree-node="data" />
+          <tree-tools slot-scope="{data}" :tree-node="data" @delDepts="getDepartments" />
         </el-tree>
       </el-card>
     </div>
@@ -16,7 +16,7 @@
 <script>
 import treeTools from './components/tree-tools.vue'
 import { getDepartments } from '@/api/departments'
-import { transListToTreeData } from '@/utils'
+import { tranListToTreeData } from '@/utils'
 export default {
   components: { treeTools },
   data() {
@@ -36,7 +36,7 @@ export default {
     async getDepartments() {
       const result = await getDepartments()
       this.company = { name: result.companyName, manager: '负责人' }
-      this.departs = transListToTreeData(result.depts, '')
+      this.departs = tranListToTreeData(result.depts, '')
     }
   }
 }
