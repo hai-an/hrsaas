@@ -24,7 +24,7 @@ export default {
   components: { treeTools, AddDepts },
   data() {
     return {
-      company: { name: '', manager: '', id: '' },
+      company: { name: '', manager: '' },
       departs: [],
       defaultProps: {
         // children: 'children',
@@ -40,7 +40,7 @@ export default {
   methods: {
     async getDepartments() {
       const result = await getDepartments()
-      this.company = { name: result.companyName, manager: '负责人' }
+      this.company = { name: result.companyName, manager: '负责人', id: '' }
       this.departs = tranListToTreeData(result.depts, '')
     },
     addDepts(node) {
