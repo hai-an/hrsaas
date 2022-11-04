@@ -100,7 +100,6 @@ export default {
   watch: {},
   created() {},
   mounted() {
-    console.log('treeNode', this.treeNode)
   },
   methods: {}
 }

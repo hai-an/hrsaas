@@ -24,7 +24,7 @@ export default {
   components: { treeTools, AddDepts },
   data() {
     return {
-      company: { name: '', manager: '' },
+      company: { name: '', manager: '', id: '' },
       departs: [],
       defaultProps: {
         // children: 'children',
