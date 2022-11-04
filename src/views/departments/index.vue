@@ -11,7 +11,7 @@
       </el-card>
     </div>
     <!-- 放置 新增弹层组件 -->
-    <add-depts :is-show-dialog="isShowDialog" />
+    <add-depts :is-show-dialog="isShowDialog" :tree-node="node" />
   </div>
 </template>
 
