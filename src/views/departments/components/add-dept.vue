@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { getDepartments, addDepartments, getDepartDetail } from '@/api/departments'
+import { getDepartments, addDepartments, getDepartDetail, updateDepartments } from '@/api/departments'
 import { getEmployeesSimple } from '@/api/employees'
 export default {
   // name: '',
@@ -77,7 +77,13 @@ export default {
       const { depts } = await getDepartments()
       // depts 是所有的部门数据
       // 如何去找技术部所有的子节点
-      const isRepeat = depts.filter(item => item.pid === this.treeNode.id).some((item) => item.name === value)
+      let isRepeat = false
+      if (this.formData.id) { // 编辑模式
+      //  排除 当前 的id ,并且统计部门下不能出现重复部门名称
+        isRepeat = depts.filter(item => item.pid !== this.formData.id && item.pid === this.treeNode.pid).some(item => item.name === value)
+      } else { // 新增模式
+        isRepeat = depts.filter(item => item.pid === this.treeNode.id).some((item) => item.name === value)
+      }
       isRepeat
         ? callback(new Error(`同级部门下已经有${value}的部门了`))
         : callback()
@@ -86,7 +92,12 @@ export default {
     const checkCodeRepeat = async(rule, value, callback) => {
       // 先获取最新的组织架构数据
       const { depts } = await getDepartments()
-      const isRepeat = depts.some((item) => item.code === value && value) // 防止用户不添加编码,i出现编码为空的情况
+      let isRepeat = false
+      if (this.formData.id) {
+        isRepeat = depts.filter(item => item.id !== this.formData.id).some(item => item.code === value && value)
+      } else {
+        isRepeat = depts.some((item) => item.code === value && value) // 防止用户不添加编码,i出现编码为空的情况
+      }
       isRepeat
         ? callback(new Error(`组织架构中已经有部门使用${value}编码`))
         : callback()
@@ -151,7 +162,11 @@ export default {
     btnOk() {
       this.$refs.deptForm.validate(async isOk => {
         if (isOk) { // 表示可以提交表单数据了
-          await addDepartments({ ...this.formData, pid: this.treeNode.id }) // 调用新增接口 添加父部门的id
+          if (this.formData.id) { // 编辑模式  调用编辑接口
+            await updateDepartments(this.formData)
+          } else { // 新增模式  调用新增接口
+            await addDepartments({ ...this.formData, pid: this.treeNode.id }) // 调用新增接口 添加父部门的id
+          }
           this.$emit('addDepts') // 通知父组件关闭弹层
           this.$emit('update:isShowDialog', false) // 语法糖 update:props名称,值 ,父组件 @propos名称.async="变量接收值"
         }

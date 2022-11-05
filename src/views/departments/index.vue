@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <div class="app-container">
       <el-card class="tree-card">
-        <tree-tools :tree-node="company" :is-root="true" @AddDepts="addDepts" />
+        <tree-tools :tree-node="company" :is-root="true" @addDepts="addDepts" />
         <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
           <!-- 使用自定义的 数结构 -->
           <!-- slot-scope 作用域插槽 :传入两个参数node和data，分别表示当前节点的 Node 对象和当前节点的数据。 -->
