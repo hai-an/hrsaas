@@ -6,12 +6,23 @@
         <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
           <!-- 使用自定义的 数结构 -->
           <!-- slot-scope 作用域插槽 :传入两个参数node和data，分别表示当前节点的 Node 对象和当前节点的数据。 -->
-          <tree-tools slot-scope="{data}" :tree-node="data" @AddDepts="addDepts" @delDepts="getDepartments" />
+          <tree-tools
+            slot-scope="{data}"
+            :tree-node="data"
+            @addDepts="addDepts"
+            @delDepts="getDepartments"
+            @editDepts="editDepts"
+          />
         </el-tree>
       </el-card>
     </div>
     <!-- 放置 新增弹层组件 -->
-    <add-depts :is-show-dialog.sync="isShowDialog" :tree-node="node" @addDepts="getDepartments" />
+    <add-depts
+      ref="addDepts"
+      :is-show-dialog.sync="isShowDialog"
+      :tree-node="node"
+      @addDepts="getDepartments"
+    />
   </div>
 </template>
 
@@ -46,6 +57,14 @@ export default {
     addDepts(node) {
       this.isShowDialog = true // 显示弹层
       this.node = node // 因为node是当前的点击的部门,此时这个部门应该记录下来
+    },
+    editDepts(node) {
+      this.isShowDialog = true // 显示弹层
+      this.node = node // 因为node是当前的点击的部门,此时这个部门应该记录下来
+      //  我们需要在这个位置 调用子组件的方法
+      // 父组件 调用子组件的方法
+      console.log(this.$refs.addDepts)
+      this.$refs.addDepts.getDepartDetail(node.id) // 直接调用子组件的方法 传入一个id
     }
   }
 }

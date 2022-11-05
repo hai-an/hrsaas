@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="新增部门" :visible="isShowDialog" @close="btnCancel">
+  <el-dialog :title="showTitle" :visible="isShowDialog" @close="btnCancel">
     <el-form ref="deptForm" :model="formData" :rules="rules" label-width="120px">
       <!-- 表单组件 el-form label-width设置label的宽度 -->
       <!-- 匿名插槽 -->
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { getDepartments, addDepartments } from '@/api/departments'
+import { getDepartments, addDepartments, getDepartDetail } from '@/api/departments'
 import { getEmployeesSimple } from '@/api/employees'
 export default {
   // name: '',
@@ -135,7 +135,11 @@ export default {
       people: []
     }
   },
-  computed: {},
+  computed: {
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '新增子部门'
+    }
+  },
   watch: {},
   created() {},
   mounted() {},
@@ -155,7 +159,17 @@ export default {
     },
     btnCancel() {
       this.$refs.deptForm.resetFields() // 重置校验规则
+      // 重置数据  因为resetFields 只能重置 表单上的数据 非表单上的 比如 编辑中id 不能重置
+      this.formData = {
+        name: '',
+        code: '',
+        manager: '',
+        introduce: ''
+      }
       this.$emit('update:isShowDialog', false) // 通知父组件关闭弹层
+    },
+    async getDepartDetail(id) { // 获取部门详情
+      this.formData = await getDepartDetail(id)
     }
   }
 }

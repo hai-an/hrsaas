@@ -53,8 +53,9 @@ export default {
   methods: {
     operateDepts(type) {
       if (type === 'add') { // 添加子部门
-        this.$emit('AddDepts', this.treeNode) // 点击传入当前节点信息
+        this.$emit('addDepts', this.treeNode) // 点击传入当前节点信息
       } else if (type === 'edit') { // 编辑子部门
+        this.$emit('editDepts', this.treeNode) // 点击传入当前节点信息
       } else { // 删除子部门
         this.$confirm('确定要删除该部门吗?').then(() => {
         // 如果点击确定就会进入 .then,点击取消进入 .catch
