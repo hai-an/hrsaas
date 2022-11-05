@@ -1,6 +1,6 @@
 <template>
-  <el-dialog title="新增部门" :visible="isShowDialog">
-    <el-form :model="formData" :rules="rules" label-width="120px">
+  <el-dialog title="新增部门" :visible="isShowDialog" @close="btnCancel">
+    <el-form ref="deptForm" :model="formData" :rules="rules" label-width="120px">
       <!-- 表单组件 el-form label-width设置label的宽度 -->
       <!-- 匿名插槽 -->
       <el-form-item label="部门名称" prop="name">
@@ -47,15 +47,15 @@
     <!-- el-dialog有专门放置底部操作栏的 插槽  具名插槽 -->
     <el-row slot="footer" type="flex" justify="center">
       <el-col :span="8" style="text-align: center">
-        <el-button size="small">取 消</el-button>
-        <el-button type="primary" size="small">确 定</el-button>
+        <el-button size="small" @click="btnCancel">取 消</el-button>
+        <el-button type="primary" size="small" @click="btnOk">确 定</el-button>
       </el-col>
     </el-row>
   </el-dialog>
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+import { getDepartments, addDepartments } from '@/api/departments'
 import { getEmployeesSimple } from '@/api/employees'
 export default {
   // name: '',
@@ -143,6 +143,19 @@ export default {
     async getEmployeesSimple() {
       this.people = await getEmployeesSimple()
       console.log('this.people', this.people)
+    },
+    btnOk() {
+      this.$refs.deptForm.validate(async isOk => {
+        if (isOk) { // 表示可以提交表单数据了
+          await addDepartments({ ...this.formData, pid: this.treeNode.id }) // 调用新增接口 添加父部门的id
+          this.$emit('addDepts') // 通知父组件关闭弹层
+          this.$emit('update:isShowDialog', false) // 语法糖 update:props名称,值 ,父组件 @propos名称.async="变量接收值"
+        }
+      })
+    },
+    btnCancel() {
+      this.$refs.deptForm.resetFields() // 重置校验规则
+      this.$emit('update:isShowDialog', false) // 通知父组件关闭弹层
     }
   }
 }

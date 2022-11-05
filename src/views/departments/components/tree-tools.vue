@@ -53,14 +53,12 @@ export default {
   methods: {
     operateDepts(type) {
       if (type === 'add') { // 添加子部门
-        this.$message(`${type}成功!`)
         this.$emit('AddDepts', this.treeNode) // 点击传入当前节点信息
       } else if (type === 'edit') { // 编辑子部门
-        this.$message(`${type}成功!`)
       } else { // 删除子部门
         this.$confirm('确定要删除该部门吗?').then(() => {
         // 如果点击确定就会进入 .then,点击取消进入 .catch
-          console.log(this.treeNode.id, 'id')
+          // console.log(this.treeNode.id, 'id')
           return deleteDepartment(this.treeNode.id) // 返回Promise对象,再执行下一个 .then
         }).then(() => {
           this.$emit('delDepts')// 给父组件通信,触发自定义事件
