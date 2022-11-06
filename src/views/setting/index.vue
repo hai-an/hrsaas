@@ -32,9 +32,11 @@
               />
               <el-table-column align="center" prop="description" label="描述" />
               <el-table-column align="center" label="操作">
-                <el-button type="success" size="small">分配权限</el-button>
-                <el-button type="primary" size="small">编辑</el-button>
-                <el-button type="danger" size="small">删除</el-button>
+                <template slot-scope="{row}">
+                  <el-button type="success" size="small">分配权限</el-button>
+                  <el-button type="primary" size="small">编辑</el-button>
+                  <el-button type="danger" size="small" @click="deleteRole(row.id)">删除</el-button>
+                </template>
               </el-table-column>
             </el-table>
             <el-row
@@ -100,7 +102,7 @@
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -109,7 +111,7 @@ export default {
       list: [], // 接收用户列表数组
       page: {
         page: 1, // 当前页码
-        pagesize: 1, // 每页多少条数据
+        pagesize: 2, // 每页多少条数据
         total: 0 // 记录总数
       }
     }
@@ -124,14 +126,22 @@ export default {
   methods: {
     async getRoleList() {
       const { total, rows } = await getRoleList(this.page)
-      console.log(total)
-      console.log(rows)
-
       this.page.total = total
       this.list = rows
     },
     async getCompanyInfo() {
       this.formData = await getCompanyInfo(this.companyId)
+    },
+    async deleteRole(id) {
+      try {
+        await this.$confirm('确定要删除吗?')
+        await deleteRole(id)
+        // 成功提示 重新发请求,重置页面数据
+        this.getRoleList()
+        this.$message.success('删除成功!')
+      } catch (error) {
+        console.log(error)
+      }
     },
     changePage(newPage) {
       this.page.page = newPage // 将当前页码赋值给当前的最新页码
