@@ -18,13 +18,23 @@
             <!-- stripe属性可以创建带斑马纹的表格。它接受一个Boolean，默认为false，设置为true即为启用。 -->
             <!-- 可以使用border属性，它接受一个Boolean，设置为true即可启用边框. -->
             <el-table :data="list" border style="width: 100%" stripe>
-              <el-table-column align="center" type="index" label="序号" width="120" />
-              <el-table-column align="center" prop="name" label="名称" width="240" />
+              <el-table-column
+                align="center"
+                type="index"
+                label="序号"
+                width="120"
+              />
+              <el-table-column
+                align="center"
+                prop="name"
+                label="名称"
+                width="240"
+              />
               <el-table-column align="center" prop="description" label="描述" />
               <el-table-column align="center" label="操作">
-                <el-button type="success" size="small" label="分配权限" />
-                <el-button type="primary" size="small" label="编辑 " />
-                <el-button type="danger" size="small" label="删除 " />
+                <el-button type="success" size="small">分配权限</el-button>
+                <el-button type="primary" size="small">编辑</el-button>
+                <el-button type="danger" size="small">删除</el-button>
               </el-table-column>
             </el-table>
             <el-row
@@ -64,18 +74,22 @@
               :closable="false"
               show-icon
             />
-            <el-form label-position="right" label-width="120px" style="margin-top:50px">
+            <el-form
+              label-position="right"
+              label-width="120px"
+              style="margin-top: 50px"
+            >
               <el-form-item label="公司名称">
-                <el-input disabled style="width:400px" />
+                <el-input v-model="formData.name" disabled style="width:400px" />
               </el-form-item>
               <el-form-item label="公司地址">
-                <el-input disabled style="width:400px" />
+                <el-input v-model="formData.companyAddress" disabled style="width:400px" />
               </el-form-item>
               <el-form-item label="邮箱">
-                <el-input disabled style="width:400px" />
+                <el-input v-model="formData.mailbox" disabled style="width:400px" />
               </el-form-item>
-              <el-form-item type="textarea" :rows="3" label="备注">
-                <el-input disabled style="width:400px" />
+              <el-form-item label="备注">
+                <el-input v-model="formData.remarks" type="textarea" :rows="3" disabled style="width:400px" />
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -86,10 +100,12 @@
 </template>
 
 <script>
-import { getRoleList } from '@/api/setting'
+import { getRoleList, getCompanyInfo } from '@/api/setting'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
+      formData: {},
       list: [], // 接收用户列表数组
       page: {
         page: 1, // 当前页码
@@ -98,17 +114,24 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['companyId'])
+  },
   created() {
     this.getRoleList() // 获取角色列表
+    this.getCompanyInfo() // 获取公司的信息
   },
   methods: {
-    async  getRoleList() {
+    async getRoleList() {
       const { total, rows } = await getRoleList(this.page)
       console.log(total)
       console.log(rows)
 
       this.page.total = total
       this.list = rows
+    },
+    async getCompanyInfo() {
+      this.formData = await getCompanyInfo(this.companyId)
     },
     changePage(newPage) {
       this.page.page = newPage // 将当前页码赋值给当前的最新页码
