@@ -17,11 +17,15 @@
             <!-- 表格 -->
             <!-- stripe属性可以创建带斑马纹的表格。它接受一个Boolean，默认为false，设置为true即为启用。 -->
             <!-- 可以使用border属性，它接受一个Boolean，设置为true即可启用边框. -->
-            <el-table border style="width: 100%" stripe>
-              <el-table-column label="序号" width="120" />
-              <el-table-column label="角色名称" width="240" />
-              <el-table-column label="描述" />
-              <el-table-column label="操作" />
+            <el-table :data="list" border style="width: 100%" stripe>
+              <el-table-column align="center" type="index" label="序号" width="120" />
+              <el-table-column align="center" prop="name" label="名称" width="240" />
+              <el-table-column align="center" prop="description" label="描述" />
+              <el-table-column align="center" label="操作">
+                <el-button type="success" size="small" label="分配权限" />
+                <el-button type="primary" size="small" label="编辑 " />
+                <el-button type="danger" size="small" label="删除 " />
+              </el-table-column>
             </el-table>
             <el-row
               type="flex"
@@ -30,7 +34,21 @@
               style="height: 60px"
             >
               <!-- 分页组件 -->
-              <el-pagination layout="prev, pager, next" />
+              <!--
+              默认情况下，当总页数超过 7 页时，Pagination 会折叠多余的页码按钮。通过pager-count属性可以设置最大页码按钮数。
+              total表示总条目数，
+              page-size用于设置每页显示的页码数量
+              current-page显示当前的页码数
+              current-change事件 currentPage 改变时会触发 回调参数(当前页)
+               -->
+              <el-pagination
+                layout="prev, pager, next"
+                :current-page="page.page"
+                :page-size="page.pagesize"
+                :total="page.total"
+                :pager-count="5"
+                @current-change="changePage"
+              />
             </el-row>
           </el-tab-pane>
 
@@ -68,9 +86,34 @@
 </template>
 
 <script>
+import { getRoleList } from '@/api/setting'
 export default {
   data() {
-    return {}
+    return {
+      list: [], // 接收用户列表数组
+      page: {
+        page: 1, // 当前页码
+        pagesize: 1, // 每页多少条数据
+        total: 0 // 记录总数
+      }
+    }
+  },
+  created() {
+    this.getRoleList() // 获取角色列表
+  },
+  methods: {
+    async  getRoleList() {
+      const { total, rows } = await getRoleList(this.page)
+      console.log(total)
+      console.log(rows)
+
+      this.page.total = total
+      this.list = rows
+    },
+    changePage(newPage) {
+      this.page.page = newPage // 将当前页码赋值给当前的最新页码
+      this.getRoleList()
+    }
   }
 }
 </script>
