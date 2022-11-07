@@ -189,6 +189,8 @@ export default {
       this.$refs.roleForm.resetFields()
       this.showDialog = false
     },
+    // 点击确定 触发=> close事件(绑定跟点击取消同一个方法) => 调用 btnCancel方法
+    // 所以节约了代码...
     async btnOK() {
       try {
         await this.$refs.roleForm.validate() // 在点击确定按钮,进行一次提交前的校验
