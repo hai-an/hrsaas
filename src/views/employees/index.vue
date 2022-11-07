@@ -11,15 +11,23 @@
         </template>
       </page-tools>
       <!-- 表格 -->
-      <el-card>
+      <el-card v-loading="loading">
         <el-table :data="list" border>
           <el-table-column type="index" label="序号" sortable="" />
           <el-table-column prop="username" label="姓名" sortable="" />
           <el-table-column prop="workNumber" label="工号" sortable="" />
-          <el-table-column prop="formOfEmployment" label="聘用形式" sortable="" />
+          <el-table-column prop="formOfEmployment" label="聘用形式" :formatter="formatEmployment" sortable="" />
           <el-table-column prop="departmentName" label="部门" sortable="" />
           <el-table-column prop="timeOfEntry" label="入职时间" sortable="" />
-          <el-table-column prop="mobile" label="手机号" sortable="" />
+          <el-table-column prop="formOfEmployment" label="账号状态" sortable="">
+            <template slot-scope="{row}">
+              <el-switch
+                :value="row.formOfEmployment === 1"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+              />
+            </template>
+          </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
             <template>
               <el-button type="text" size="small">参看</el-button>
@@ -48,6 +56,7 @@
 
 <script>
 import { getEmployeeList } from '@/api/employees'
+import EmployeeEnum from '@/api/constant/employees'
 export default {
   data() {
     return {
@@ -65,14 +74,23 @@ export default {
   },
   methods: {
     async getEmployeeList() {
+      this.loading = true
       const { total, rows } = await getEmployeeList(this.page)
       this.page.total = total
       this.list = rows
-      console.log(this.list)
+      this.loading = false
+      // console.log(this.list)
     },
     changePage(newPage) {
       this.page.page = newPage // 更新页码,然后重新获取 最新页码的数据
       this.getEmployeeList()
+    },
+    // 格式化聘用形式
+    formatEmployment(row, column, cellValue, index) {
+      // row 行数据 cellValue单元格数据
+      const obj = EmployeeEnum.hireType.find(item => item.id === cellValue)
+      // console.log(typeof (cellValue) + cellValue)
+      return obj ? obj.value : '未知'
     }
   }
 }
