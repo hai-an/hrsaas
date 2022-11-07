@@ -18,7 +18,12 @@
           <el-table-column prop="workNumber" label="工号" sortable="" />
           <el-table-column prop="formOfEmployment" label="聘用形式" :formatter="formatEmployment" sortable="" />
           <el-table-column prop="departmentName" label="部门" sortable="" />
-          <el-table-column prop="timeOfEntry" label="入职时间" sortable="" />
+          <el-table-column prop="timeOfEntry" label="入职时间" sortable="">
+            <template slot-scope="{row}">
+              {{ row.timeOfEntry|formatDate }}
+              <!-- 没有用,因为返回的时间格式 就是 yyyy-mm-dd -->
+            </template>
+          </el-table-column>
           <el-table-column prop="formOfEmployment" label="账号状态" sortable="">
             <template slot-scope="{row}">
               <el-switch
@@ -92,6 +97,7 @@ export default {
       // console.log(typeof (cellValue) + cellValue)
       return obj ? obj.value : '未知'
     }
+
   }
 }
 </script>
