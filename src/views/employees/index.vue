@@ -3,23 +3,23 @@
     <div class="app-container">
       <!-- 顶部栏 -->
       <page-tools :show-before="true">
-        <span slot="before">共16条记录</span>
+        <span slot="before">共{{ page.total }}条记录</span>
         <template v-slot:after>
-          <el-button size="small" type="warning">导入execle</el-button>
+          <el-button size="small" type="success">导入execle</el-button>
           <el-button size="small" type="danger">导出execle</el-button>
           <el-button size="small" type="primary">新增员工</el-button>
         </template>
       </page-tools>
       <!-- 表格 -->
       <el-card>
-        <el-table border="">
-          <el-table-column label="序号" sortable="" />
-          <el-table-column label="姓名" sortable="" />
-          <el-table-column label="工号" sortable="" />
-          <el-table-column label="聘用形式" sortable="" />
-          <el-table-column label="部门" sortable="" />
-          <el-table-column label="入职时间" sortable="" />
-          <el-table-column label="账户状态" sortable="" />
+        <el-table :data="list" border>
+          <el-table-column type="index" label="序号" sortable="" />
+          <el-table-column prop="username" label="姓名" sortable="" />
+          <el-table-column prop="workNumber" label="工号" sortable="" />
+          <el-table-column prop="formOfEmployment" label="聘用形式" sortable="" />
+          <el-table-column prop="departmentName" label="部门" sortable="" />
+          <el-table-column prop="timeOfEntry" label="入职时间" sortable="" />
+          <el-table-column prop="mobile" label="手机号" sortable="" />
           <el-table-column label="操作" sortable="" fixed="right" width="280">
             <template>
               <el-button type="text" size="small">参看</el-button>
@@ -34,7 +34,11 @@
         <!-- 分页组件 -->
         <el-row type="flex" justify="center" align="middle" style="height: 60px;">
           <el-pagination
+            :page-size="page.size"
+            :total="page.total"
+            :current-page="page.page"
             layout="prev, pager, next"
+            @current-change="changePage"
           />
         </el-row>
       </el-card>
@@ -43,7 +47,35 @@
 </template>
 
 <script>
-export default {}
+import { getEmployeeList } from '@/api/employees'
+export default {
+  data() {
+    return {
+      list: [],
+      page: {
+        page: 1, // 当前页码
+        size: 10, // 每页显示几条数据
+        total: 0 // 总数
+      },
+      loading: false
+    }
+  },
+  created() {
+    this.getEmployeeList()
+  },
+  methods: {
+    async getEmployeeList() {
+      const { total, rows } = await getEmployeeList(this.page)
+      this.page.total = total
+      this.list = rows
+      console.log(this.list)
+    },
+    changePage(newPage) {
+      this.page.page = newPage // 更新页码,然后重新获取 最新页码的数据
+      this.getEmployeeList()
+    }
+  }
+}
 </script>
 
 <style></style>
