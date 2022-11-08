@@ -7,7 +7,7 @@
         <template v-slot:after>
           <el-button size="small" type="success">导入execle</el-button>
           <el-button size="small" type="danger">导出execle</el-button>
-          <el-button size="small" type="primary">新增员工</el-button>
+          <el-button icon="plus" size="small" type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
       <!-- 表格 -->
@@ -56,13 +56,19 @@
         </el-row>
       </el-card>
     </div>
+    <!--
+        放置新增组件弹层
+     -->
+    <add-employee :show-dialog.sync="showDialog" />
   </div>
 </template>
 
 <script>
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
+import AddEmployee from './components/add-employee.vue'
 export default {
+  components: { AddEmployee },
   data() {
     return {
       list: [],
@@ -71,7 +77,8 @@ export default {
         size: 10, // 每页显示几条数据
         total: 0 // 总数
       },
-      loading: false
+      loading: false,
+      showDialog: false
     }
   },
   created() {
