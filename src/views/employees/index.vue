@@ -71,6 +71,7 @@ export default {
   components: { AddEmployee },
   data() {
     return {
+      EmployeeEnum,
       list: [],
       page: {
         page: 1, // 当前页码
@@ -100,7 +101,7 @@ export default {
     // 格式化聘用形式
     formatEmployment(row, column, cellValue, index) {
       // row 行数据 cellValue单元格数据
-      const obj = EmployeeEnum.hireType.find(item => item.id === cellValue)
+      const obj = EmployeeEnum.hireType.find(item => item.id === +cellValue) // 因为得到的是字符型数字,使用 + 隐式转换
       // console.log(typeof (cellValue) + cellValue)
       return obj ? obj.value : '未知'
     },
