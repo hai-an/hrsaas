@@ -1,16 +1,8 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">name: {{ name }}</div>
-    <page-tools :show-before="true">
-      <!-- slot="名称" 或者 v-slot:名称 -->
-      <!-- 后者搭配 template使用,前者配合'tag标签'使用 -->
-      <template v-slot:before>
-        <span>你们好爱我</span>
-      </template>
-      <template v-slot:after>
-        <el-button type="primary">导入excel</el-button>
-      </template>
-    </page-tools>
+    <UploadExcel />
+    <PageTools />
   </div>
 </template>
 
