@@ -24,7 +24,7 @@
               <!-- 没有用,因为返回的时间格式 就是 yyyy-mm-dd -->
             </template>
           </el-table-column>
-          <el-table-column prop="formOfEmployment" label="账号状态" sortable="">
+          <el-table-column prop="enableState" label="账号状态" sortable="">
             <template slot-scope="{row}">
               <el-switch
                 :value="row.formOfEmployment === 1"
