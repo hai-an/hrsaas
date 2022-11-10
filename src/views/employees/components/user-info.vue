@@ -37,7 +37,7 @@
       <el-row class="inline-info">
         <el-col :span="12">
           <el-form-item label="手机">
-            <el-input v-model="userInfo.mobile" />
+            <el-input v-model="userInfo.mobile" disabled />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -244,10 +244,16 @@
           <el-input v-model="formData.graduateSchool" placeholder="请输入" class="inputW2" />
         </el-form-item>
         <el-form-item label="入学时间">
-          <el-date-picker v-model="formData.enrolmentTime" type="data" placeholder="请输入时间" class="inputW" value-format="yyyy-MM-dd" />
+          <el-date-picker
+            v-model="formData.enrolmentTime"
+            type="date"
+            placeholder="请输入时间"
+            class="inputW"
+            value-format="yyyy-MM-dd"
+          />
         </el-form-item>
         <el-form-item label="毕业时间">
-          <el-date-picker v-model="formData.graduationTime" type="data" placeholder="请输入时间" class="inputW" value-format="yyyy-MM-dd" />
+          <el-date-picker v-model="formData.graduationTime" type="date" placeholder="请输入时间" class="inputW" value-format="yyyy-MM-dd" />
         </el-form-item>
         <el-form-item label="专业">
           <el-input v-model="formData.major" placeholder="请输入" class="inputW" />
@@ -284,14 +290,15 @@
 
 <script>
 import EmployeeEnum from '@/api/constant/employees'
-
+import { getUserDetailById } from '@/api/user' // 读取用户基本信息
+import { getPersonalDetail, saveUserDetailById, updatePersonal } from '@/api/employees' // 读取用户详情基础信息,保存用户基本信息, 保存用户基础信息
 export default {
   data() {
     return {
       userId: this.$route.params.id,
       EmployeeEnum, // 员工枚举数据
-      userInfo: {},
-      formData: {
+      userInfo: {}, // 用户基本信息
+      formData: { // 个人基础信息
         userId: '',
         username: '', // 用户名
         sex: '', // 性别
@@ -354,6 +361,27 @@ export default {
         proofOfDepartureOfFormerCompany: '', // 前公司离职证明
         remarks: '' // 备注
       }
+    }
+  },
+  created() {
+    this.getUserDetailById() // 获取用户基本信息
+    this.getPersonalDetail() // 获取用户基础信息
+  },
+  methods: {
+    async getUserDetailById() {
+      this.userInfo = await getUserDetailById(this.userId)
+    },
+    async getPersonalDetail() {
+      this.formData = await getPersonalDetail(this.userId)
+    },
+    async saveUser() { // 更新用户基本信息
+      await saveUserDetailById(this.userInfo)
+      this.$message.success('更新用户基本信息成功!')
+    },
+    async savePersonal() { // 更新用户基础信息
+      await updatePersonal({ ...this.formData, id: this.userId })
+      this.$message.success('更新个人基础信息成功!')
+      // console.log(this.formData)
     }
   }
 }
