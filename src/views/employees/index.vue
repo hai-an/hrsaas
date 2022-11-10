@@ -35,7 +35,7 @@
           </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
             <template v-slot="{row}">
-              <el-button type="text" size="small">参看</el-button>
+              <el-button type="text" size="small" @click="$router.push(`/employees/detail/${row.id}`)">参看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
@@ -93,7 +93,7 @@ export default {
       this.page.total = total
       this.list = rows
       this.loading = false
-      // console.log(this.list)
+      console.log(this.list)
     },
     changePage(newPage) {
       this.page.page = newPage // 更新页码,然后重新获取 最新页码的数据
