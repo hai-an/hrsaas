@@ -2,6 +2,7 @@
   <div class="user-info">
     <!-- 个人信息 -->
     <el-form label-width="220px">
+
       <!-- 工号 入职时间 -->
       <el-row class="inline-info">
         <el-col :span="12">

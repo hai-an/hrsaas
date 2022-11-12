@@ -5,9 +5,22 @@
       <page-tools :show-before="true">
         <span slot="before">共{{ page.total }}条记录</span>
         <template v-slot:after>
-          <el-button size="small" type="success" @click="$router.push('/import?type=user')">导入execle</el-button>
-          <el-button size="small" type="danger" @click="exportData">导出execle</el-button>
-          <el-button icon="plus" size="small" type="primary" @click="showDialog=true">新增员工</el-button>
+          <el-button
+            size="small"
+            type="success"
+            @click="$router.push('/import?type=user')"
+          >导入execle</el-button>
+          <el-button
+            size="small"
+            type="danger"
+            @click="exportData"
+          >导出execle</el-button>
+          <el-button
+            icon="plus"
+            size="small"
+            type="primary"
+            @click="showDialog = true"
+          >新增员工</el-button>
         </template>
       </page-tools>
       <!-- 表格 -->
@@ -17,25 +30,36 @@
           <el-table-column prop="username" label="姓名" sortable="" />
           <el-table-column prop="workNumber" label="工号" sortable="" />
           <el-table-column width="130px" label="头像" align="center">
-            <template slot-scope="{row}">
+            <template slot-scope="{ row }">
               <img
                 v-imagerror="require('@/assets/common/bigUserHeader.png')"
                 :src="row.staffPhoto"
                 alt=""
-                style="border-radius: 50%; width: 100px; height: 100px; padding: 10px;"
+                style="
+                  border-radius: 50%;
+                  width: 100px;
+                  height: 100px;
+                  padding: 10px;
+                "
+                @click="showQrCode(row.staffPhoto)"
               >
             </template>
           </el-table-column>
-          <el-table-column prop="formOfEmployment" label="聘用形式" :formatter="formatEmployment" sortable="" />
+          <el-table-column
+            prop="formOfEmployment"
+            label="聘用形式"
+            :formatter="formatEmployment"
+            sortable=""
+          />
           <el-table-column prop="departmentName" label="部门" sortable="" />
           <el-table-column prop="timeOfEntry" label="入职时间" sortable="">
-            <template slot-scope="{row}">
-              {{ row.timeOfEntry|formatDate }}
+            <template slot-scope="{ row }">
+              {{ row.timeOfEntry | formatDate }}
               <!-- 没有用,因为返回的时间格式 就是 yyyy-mm-dd -->
             </template>
           </el-table-column>
           <el-table-column prop="enableState" label="账号状态" sortable="">
-            <template slot-scope="{row}">
+            <template slot-scope="{ row }">
               <el-switch
                 :value="row.formOfEmployment === 1"
                 active-color="#13ce66"
@@ -44,18 +68,31 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
-            <template v-slot="{row}">
-              <el-button type="text" size="small" @click="$router.push(`/employees/detail/${row.id}`)">参看</el-button>
+            <template v-slot="{ row }">
+              <el-button
+                type="text"
+                size="small"
+                @click="$router.push(`/employees/detail/${row.id}`)"
+              >参看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
-              <el-button type="text" size="small" @click="delEmployee(row.id)">删除</el-button>
+              <el-button type="text" size="small" @click="editRole(row.id)">角色</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="delEmployee(row.id)"
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
         <!-- 分页组件 -->
-        <el-row type="flex" justify="center" align="middle" style="height: 60px;">
+        <el-row
+          type="flex"
+          justify="center"
+          align="middle"
+          style="height: 60px"
+        >
           <el-pagination
             :page-size="page.size"
             :total="page.total"
@@ -66,10 +103,23 @@
         </el-row>
       </el-card>
     </div>
+    <!-- 二维码弹出层 -->
+    <el-dialog
+      title="二维码"
+      :visible.sync="showCodeDialog"
+      @opened="showQrCode"
+      @close="imgUrl = ''"
+    >
+      <el-row type="flex" justify="center">
+        <canvas ref="myCanvas" />
+      </el-row>
+    </el-dialog>
     <!--
         放置新增组件弹层
      -->
     <add-employee :show-dialog.sync="showDialog" />
+    <!-- 放置权限弹出层 -->
+    <assign-role ref="assignRole" :show-role-dialog.sync="showRoleDialog" :user-id="userId" />
   </div>
 </template>
 
@@ -78,8 +128,10 @@ import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees' // 引入员工枚举对象
 import AddEmployee from './components/add-employee.vue'
 import { formatDate } from '@/filters'
+import QrCode from 'qrcode'
+import AssignRole from './components/assign-role'
 export default {
-  components: { AddEmployee },
+  components: { AddEmployee, AssignRole },
   data() {
     return {
       EmployeeEnum,
@@ -90,13 +142,34 @@ export default {
         total: 0 // 总数
       },
       loading: false,
-      showDialog: false
+      showDialog: false,
+      showCodeDialog: false, // 二维码弹出层
+      showRoleDialog: false, // 权限弹出层
+      userId: null
     }
   },
   created() {
     this.getEmployeeList()
   },
   methods: {
+    showQrCode(url) {
+    // url 存在 才弹出层
+      console.log(url)
+      if (url) {
+        this.showCodeDialog = true
+        this.$nextTick(() => {
+          console.log(url)
+          QrCode.toCanvas(this.$refs.myCanvas, url)
+        })
+        // 数据更新了, 但是弹层会立刻出现吗? 页面的渲染是异步的!!
+        // this.$nextTick(() => {
+        //   QrCode.toCanvas(this.$refs.myCanvas, url) // 将地址转化成二维码
+        //   // 如果转化的二维码 是一个地址,就会跳转到该地址,如果不是就会显示内容
+        //
+      } else if (!url) {
+        this.$message.warning('该用户还未上传头像')
+      }
+    },
     async getEmployeeList() {
       this.loading = true
       const { total, rows } = await getEmployeeList(this.page)
@@ -112,11 +185,11 @@ export default {
     // 格式化聘用形式
     formatEmployment(row, column, cellValue, index) {
       // row 行数据 cellValue单元格数据
-      const obj = EmployeeEnum.hireType.find(item => item.id === +cellValue) // 因为得到的是字符型数字,使用 + 隐式转换
+      const obj = EmployeeEnum.hireType.find((item) => item.id === +cellValue) // 因为得到的是字符型数字,使用 + 隐式转换
       // console.log(typeof (cellValue) + cellValue)
       return obj ? obj.value : '未知'
     },
-    async  delEmployee(id) {
+    async delEmployee(id) {
       try {
         await this.$confirm('确定要删除吗?')
         await delEmployee(id)
@@ -128,16 +201,19 @@ export default {
     },
     exportData() {
       const headers = {
-        '手机号': 'mobile',
-        '姓名': 'username',
-        '入职日期': 'timeOfEntry',
-        '聘用形式': 'formOfEmployment',
-        '转正日期': 'correctionTime',
-        '工号': 'workNumber',
-        '部门': 'departmentName'
+        手机号: 'mobile',
+        姓名: 'username',
+        入职日期: 'timeOfEntry',
+        聘用形式: 'formOfEmployment',
+        转正日期: 'correctionTime',
+        工号: 'workNumber',
+        部门: 'departmentName'
       }
-      import('@/vendor/Export2Excel').then(async excel => {
-        const { rows } = await getEmployeeList({ page: 1, size: this.page.total })
+      import('@/vendor/Export2Excel').then(async(excel) => {
+        const { rows } = await getEmployeeList({
+          page: 1,
+          size: this.page.total
+        })
         const data = this.formatJson(headers, rows)
         /*
         multiHeader中的一行表头中的字段的个数需要和真正的列数相等，假设想要跨列，多余的空间需要定义成空串
@@ -162,22 +238,33 @@ export default {
       /*
      rows=[{username:'张三'},{},{}] =>  [[]username:'张三'},[],[]]
       */
-      return rows.map(item => {
+      return rows.map((item) => {
         // item是一个对象  { mobile: 132111,username: '张三'  }
         // ["手机号", "姓名", "入职日期" 。。]
-        return Object.keys(headers).map(key => {
-        // 需要判断 字段
-          if (headers[key] === 'timeOfEntry' || headers[key] === 'correctionTime') {
+        return Object.keys(headers).map((key) => {
+          // 需要判断 字段
+          if (
+            headers[key] === 'timeOfEntry' ||
+            headers[key] === 'correctionTime'
+          ) {
             return formatDate(item[headers[key]]) // 返回格式化之前的时间
           } else if (headers[key] === 'formOfEmployment') {
-            var obj = EmployeeEnum.hireType.find(obj => obj.id === item[headers[key]])
+            var obj = EmployeeEnum.hireType.find(
+              (obj) => obj.id === item[headers[key]]
+            )
             return obj ? obj.value : '未知'
           }
           return item[headers[key]]
         }) // => ["张三","13811"，"2018","1", "2018", "10002"]
         // return rows.map(item => Object.keys(headers).map(key => item[headers[key]]))
-      // 需要处理时间格式问题
+        // 需要处理时间格式问题
       })
+    },
+    async editRole(id) { // 编辑角色
+      this.userId = id // props传值 是异步的
+      await this.$refs.assignRole.getUserDetailById(id)
+      // 父组件调用子组件的方法
+      this.showRoleDialog = true
     }
   }
 }
