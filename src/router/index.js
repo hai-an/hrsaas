@@ -74,7 +74,7 @@ export const constantRoutes = [
     }]
 
   },
-  
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
@@ -93,7 +93,7 @@ export const asyncRoutes = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }), // 管理滚动行为 如果出现滚动切换就让 页面回到顶部
-  routes: [...constantRoutes, ...asyncRoutes] //
+  routes: [...constantRoutes] //
 })
 
 const router = createRouter()
