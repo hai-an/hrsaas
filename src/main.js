@@ -16,7 +16,7 @@ import '@/permission' // permission control
 import Component from '@/components' // 全局引入 组件
 import * as directives from '@/directives' // 引入 自定义指令的对象
 import * as filters from '@/filters' // 引入 引入工具类
-
+import checkPermission from '@/mixin/checkPermission' // 导入混入对象
 // // 导入自定义指令文件
 // 遍历所有的导出的指令对象 完成自定义全局注册
 Object.keys(directives).forEach((key) => {
@@ -28,6 +28,7 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 Vue.use(Component) // 注册自己的插件
+Vue.use(checkPermission) // 注册全局混入mixin 对象方法
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

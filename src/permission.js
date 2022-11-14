@@ -32,7 +32,7 @@ router.beforeEach(async(to, from, next) => {
         // routes就是筛选得到的动态路由
         // 动态路由 添加到路由表中 默认的路由表只有静态路由 没有动态路由
         // addRoutes 必须用next(地址)不能用next()
-        router.addRoutes(routes) // 添加动态路由到路由表 铺路
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }]) // 添加动态路由到路由表 铺路 // 404页必须放在动态路由表的末尾！！！
         next(to.path) // 相当于跳转到对应的地址相当于多做一次 跳转 为什么要多做一次跳转
         // 进门了,但是进门之后我要去的地方的路还没有铺好,直接走,掉坑里,多做一次跳转,再从门外往里进一次,跳转之前,把路铺好,再次进来的时候 ,路就铺好了
       } else {

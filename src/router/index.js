@@ -15,6 +15,7 @@ import attendancesRouter from './modules/attendances'
 import salarysRouter from './modules/salarys'
 import settingRouter from './modules/setting'
 import socialRouter from './modules/social'
+import userRouter from './modules/user'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -74,9 +75,9 @@ export const constantRoutes = [
     }]
 
   },
-
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  userRouter
+  // 404页必须放在末尾！！！
+  // { path: '*', redirect: '/404', hidden: true }
 ]
 // 动态路由
 export const asyncRoutes = [

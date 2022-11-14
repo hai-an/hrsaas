@@ -47,6 +47,14 @@ const actions = {
   logout(context) {
     context.commit('removeToken') // 清除token
     context.commit('removeUserInfo') // 清除 用户基本资料
+    // 退出登录时,清空路由(恢复静态路由,清空动态路由)对象
+    /* 要清空permission模块下的state数据
+        vuex中 user子模块 permission子模块
+        子模块调用子模块的actions 默认情况下 子模块的context是子模块的actions  默认情况下 子模块的context是子模块的
+        父模块 调用 子模块的action
+    */
+    context.commit('permission/setRoutes', [], { root: true })
+    // 子模块调用子模块的actions 可以将 commit的第三个参数 设置成 {root: true} 就表示当前的context不是子模块了 而是父模块
   }
 }
 export default {
