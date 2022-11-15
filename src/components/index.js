@@ -4,6 +4,8 @@ import UploadExcel from './UploadExcel'
 import ImageUpload from './ImageUpload'
 import Print from 'vue-print-nb'
 import ScreenFull from './ScreenFull'
+import ThemePicker from './ThemePicker'
+
 export default {
   install(Vue) {
     // 注册全局的通用栏组件对象
@@ -11,6 +13,7 @@ export default {
     Vue.component('UploadExcel', UploadExcel) // 注册导入execl组件
     Vue.component('ImageUpload', ImageUpload) // 注册导入照片组件
     Vue.use(Print) // 注册打印组件
-    Vue.component('ScreenFull', ScreenFull)
+    Vue.component('ScreenFull', ScreenFull) // 全屏组件
+    Vue.component('ThemePicker', ThemePicker) // 主题组件
   }
 }
