@@ -12,6 +12,8 @@
       <span class="breadBtn">VIP版</span>
     </div>
     <div class="right-menu">
+      <!-- 放置切换多语言 -->
+      <lang class="right-menu-item" />
       <!--放置 全屏组件 -->
       <screen-full class="right-menu-item" />
       <!-- 放置全屏插件 -->
