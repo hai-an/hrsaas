@@ -130,7 +130,7 @@ import EmployeeEnum from '@/api/constant/employees' // 引入员工枚举对象
 import AddEmployee from './components/add-employee.vue'
 import { formatDate } from '@/filters'
 import QrCode from 'qrcode'
-import AssignRole from './components/assign-role'
+import AssignRole from './components/assign-role.vue'
 export default {
   components: { AddEmployee, AssignRole },
   data() {
@@ -151,6 +151,7 @@ export default {
   },
   created() {
     this.getEmployeeList()
+    console.log(this.list)
   },
   methods: {
     showQrCode(url) {
